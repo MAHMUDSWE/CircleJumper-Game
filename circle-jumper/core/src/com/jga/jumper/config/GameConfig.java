@@ -2,7 +2,7 @@ package com.jga.jumper.config;
 
 public class GameConfig {
 
-    public static final float WIDTH = 600f; //pixels
+    public static final float WIDTH = 480f; //pixels
     public static final float HEIGHT = 800f;
 
     public static final float WORLD_WIDTH = 16f; //world units
@@ -11,6 +11,7 @@ public class GameConfig {
     public static final float WORLD_CENTER_X = WORLD_WIDTH / 2f;
     public static final float WORLD_CENTER_Y = WORLD_HEIGHT / 2f;
 
+    public static final int CELL_SIZE = 1;
 
     private GameConfig(){
 

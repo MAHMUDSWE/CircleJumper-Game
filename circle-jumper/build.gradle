@@ -1,5 +1,5 @@
 buildscript {
-    
+
 
     repositories {
         mavenLocal()
@@ -10,13 +10,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.1.3'
-        
-
     }
 }
 
 allprojects {
     apply plugin: "eclipse"
+    apply plugin: "idea"
 
     version = '1.0'
     ext {
@@ -46,9 +45,11 @@ project(":desktop") {
 
     dependencies {
         implementation project(":core")
+        implementation project(":jga-utils")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        
+        api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+
     }
 }
 
@@ -56,24 +57,30 @@ project(":android") {
     apply plugin: "com.android.application"
 
     configurations { natives }
-
     dependencies {
         implementation project(":core")
+        implementation project(":jga-utils")
+
         api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-        
+
     }
 }
-
-project(":core") {
+project(":jga-utils") {
     apply plugin: "java-library"
-
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+    }
+}
+project(":core") {
+    apply plugin: "java-library"
+
+    dependencies {
+
+        implementation project(":jga-utils")
+
     }
 }
