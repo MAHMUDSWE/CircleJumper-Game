@@ -20,6 +20,9 @@ public class GameConfig {
     public static final float MONSTER_START_ANG_SPEED = 45f;
     public static final float MONSTER_START_ANGLE = -90f;
 
+    public static final float MONSTER_MAX_SPEED = 2f;
+    public static final float MONSTER_START_ACC = 4f;
+
     private GameConfig() {
 
     }
