@@ -1,4 +1,4 @@
- package com.jga.jumper.config;
+package com.jga.jumper.config;
 
 public class GameConfig {
 
@@ -12,10 +12,14 @@ public class GameConfig {
     public static final float WORLD_CENTER_Y = WORLD_HEIGHT / 2f;
 
     public static final int CELL_SIZE = 1;
-     public static final PLANET_SIZE=9f; //  world units
-    public static  final PLANET_HALF_SIZE= PLANET_SIZE/2f // world units
+    public static final float PLANET_SIZE = 9f; //  world units
+    public static final float PLANET_HALF_SIZE = PLANET_SIZE / 2f; // world units
 
-    private GameConfig(){
+    public static final float MONSTER_SIZE = 1f;
+    public static final float MONSTER_HALF_SIZE = MONSTER_SIZE / 2f;
 
-    };
+    private GameConfig() {
+
+    }
+
 }

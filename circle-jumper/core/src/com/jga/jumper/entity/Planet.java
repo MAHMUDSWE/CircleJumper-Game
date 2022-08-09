@@ -1,6 +1,9 @@
 package com.jga.jumper.entity;
 
 
+import com.badlogic.gdx.math.Circle;
+import com.jga.jumper.config.GameConfig;
+
 public class Planet
 {
     // attributes
@@ -12,11 +15,11 @@ public class Planet
 
     private Circle bounds;
 
-     //== constractor
+     //== constructor
 
      public Planet()
      {
-         bounds =new Circle(x,y, Gameconfig.PLANET_HALF_SIZE);
+         bounds =new Circle(x,y, GameConfig.PLANET_HALF_SIZE);
 
      }
       //== public methods
@@ -80,7 +83,7 @@ public class Planet
     }
     public void updateBounds()
     {
-        bounds.setPosition(x.y);
+        bounds.setPosition(x, y);
 
     }
 
