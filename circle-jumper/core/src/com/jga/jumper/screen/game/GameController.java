@@ -2,8 +2,8 @@ package com.jga.jumper.screen.game;
 
 import com.badlogic.gdx.utils.Logger;
 import com.jga.jumper.config.GameConfig;
-import com.jga.jumper.entity.Planet;
 import com.jga.jumper.entity.Monster;
+import com.jga.jumper.entity.Planet;
 
 public class GameController {
 
@@ -14,6 +14,8 @@ public class GameController {
 
     private float monsterStartX;
     private float monsterStartY;
+
+    private boolean calledUpdate = false;
 
     //==constructors==
     public GameController() {
@@ -36,6 +38,7 @@ public class GameController {
     }
 
     public void update(float delta) {
+        monster.update(delta);
     }
 
     public Planet getPlanet() {
