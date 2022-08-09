@@ -37,13 +37,7 @@ public class GameRenderer implements Disposable {
         debugCameraController.handleDebugInput(delta);
         debugCameraController.applyTo(camera);
 
-        viewport.apply();
-        renderer.setProjectionMatrix(camera.combined);
-        renderer.begin(ShapeRenderer.ShapeType.Line);
 
-        renderer.circle(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y, 3, 30);
-
-        renderer.end();
 
         renderDebug();
 
@@ -62,5 +56,21 @@ public class GameRenderer implements Disposable {
 
     private void renderDebug(){
         ViewportUtils.drawGrid(viewport, renderer, GameConfig.CELL_SIZE);
+        viewport.apply();
+        renderer.setProjectionMatrix(camera.combined);
+        renderer.setColor(Color.RED);
+        renderer.begin(ShapeRenderer.ShapeType.Line);
+
+        drawDebug();
+
+        renderer.end();
+
+
+    }
+    private void drawDebug()
+    {
+        Planet planet = controller.getPlanet();
+        Circle PlanetBounds= planet.getBounds();
+        renderer.circle(planetBounds.x, planetBounds.y,planetBounds.radius,30)
     }
 }
