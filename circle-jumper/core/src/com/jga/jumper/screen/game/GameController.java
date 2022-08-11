@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.Logger;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Monster;
 import com.jga.jumper.entity.Planet;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 
 public class GameController {
 
@@ -13,6 +15,10 @@ public class GameController {
     // == attributes ==
     private Planet planet;
     private Monster monster;
+
+    private final Array<Coin> coins= new Array<Coin>();
+    private final Pool<Coin> coinPool = Pools.get(Coin.class,10);
+    private final coinTimer;
 
     private float monsterStartX;
     private float monsterStartY;
@@ -46,6 +52,8 @@ public class GameController {
         }
 
         monster.update(delta);
+        spawnCoins(delta);
+
     }
 
     public Planet getPlanet() {
@@ -54,5 +62,35 @@ public class GameController {
 
     public Monster getMonster() {
         return monster;
+    }
+
+    private Array<Coin>getcoins()
+    {
+        return coins;
+
+    }
+
+    private void spawnCoins(float delta)
+    {
+        coinTimer+=delta;
+
+        if(coins.size >= gameconfig.MAX_COINS)
+        {
+            coinTimer=0;
+            return;
+
+        }
+
+
+        if(coinTimer >= Gameconfig.COIN_SPAWN_TIME)
+        {
+           coinTimer=0;
+           Coin coin = CoinPool.obtain();
+           float  randomAngle = MathUtlis.random(360);
+           coin.setAngleDeg(randomAngle);
+           coins.add(coin);
+
+
+        }
     }
 }

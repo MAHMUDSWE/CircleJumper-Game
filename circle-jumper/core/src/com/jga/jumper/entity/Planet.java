@@ -86,5 +86,5 @@ public class Planet
         bounds.setPosition(x, y);
 
     }
-
+ //  nothing
 }
