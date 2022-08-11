@@ -1,36 +1,40 @@
 package com.jga.jumper.entity;
 
-import com.jga.util.entity.EntityBase;
-import com.badlogic.gdx.utils.Pool;
-import com.jga.jumper.config.Gameconfig;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Pool;
+import com.jga.jumper.config.GameConfig;
+import com.jga.util.entity.EntityBase;
 
-public clas Coin extends EntityBase implements Pool.Poolable{
+public class Coin extends EntityBase implements Pool.Poolable {
 
-private float angleDeg;
+    private float angleDeg;
 
-public Coin(){
-        setSize(Gameconfig.COIN_SIZE,Gameconfig.COIN_SIZE);
+    public Coin() {
+        setSize(GameConfig.COIN_SIZE, GameConfig.COIN_SIZE);
 
-        }
+    }
 
-public  void setAngleDeg(float value){
+    public void setAngleDeg(float value) {
         angleDeg = value % 360;
 
-        float radius = Gameconfig.PLANET_HALF_SIZE;
+        float radius = GameConfig.PLANET_HALF_SIZE;
 
-        float originX = Gameconfig.WORLD_CENTER_X;
-        float originY = Gameconfig.WORLD_CENTER_Y;
+        float originX = GameConfig.WORLD_CENTER_X;
+        float originY = GameConfig.WORLD_CENTER_Y;
 
         float newX = originX + MathUtils.cosDeg(-angleDeg) * radius;
-        float newY = originY + MathUtlis.sinDeg(-angleDeg) * radius;
+        float newY = originY + MathUtils.sinDeg(-angleDeg) * radius;
 
         setPosition(newX, newY);
 
-        }
+    }
 
-public final getAngleDeg(){return angleDeg;}
+    public float getAngleDeg() {
+        return angleDeg;
+    }
 
-        Public void reset( ){}
+    @Override
+    public void reset() {
 
+    }
 }
