@@ -87,7 +87,20 @@ public class GameRenderer implements Disposable {
                 0, 0,
                 monsterBounds.width, monsterBounds.height,
                 1, 1,
-                GameConfig.MONSTER_START_ANGLE - monster.getAngleDeg()
+                GameConfig.START_ANGLE - monster.getAngleDeg()
         );
+        renderer setColor(Color.YELLOW);
+        for(Coin coin : controller.getCoins())
+        {
+            Ractangle coinBounds= coin.getBounds();
+            renderer.rect(
+                    coinBounds.x, coinBounds.y,
+                    0,0,
+                    coinBounds.width, coinBounds.height,
+                    1,1,
+                    Gameconfig.START_ANGLE - coin.getAngleDeg();
+            );
+
+        }
     }
 }
