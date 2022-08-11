@@ -5,12 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
 import com.jga.jumper.entity.Planet;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 public class GameController {
 
@@ -19,8 +19,8 @@ public class GameController {
     private Planet planet;
     private Monster monster;
 
-    private final Array<Coin> coins= new Array<Coin>();
-    private final Pool<Coin> coinPool = Pools.get(Coin.class,10);
+    private final Array<Coin> coins = new Array<Coin>();
+    private final Pool<Coin> coinPool = Pools.get(Coin.class, 10);
     private float coinTimer;
 
     private float monsterStartX;
@@ -67,30 +67,26 @@ public class GameController {
         return monster;
     }
 
-    public Array<Coin> getCoins()
-    {
+    public Array<Coin> getCoins() {
         return coins;
     }
 
-    private void spawnCoins(float delta)
-    {
-        coinTimer+=delta;
+    private void spawnCoins(float delta) {
+        coinTimer += delta;
 
-        if(coins.size >= GameConfig.MAX_COINS)
-        {
-            coinTimer=0;
+        if (coins.size >= GameConfig.MAX_COINS) {
+            coinTimer = 0;
             return;
 
         }
 
 
-        if(coinTimer >= GameConfig.COIN_SPAWN_TIME)
-        {
-           coinTimer=0;
-           Coin coin = coinPool.obtain();
-           float  randomAngle = MathUtils.random(360);
-           coin.setAngleDeg(randomAngle);
-           coins.add(coin);
+        if (coinTimer >= GameConfig.COIN_SPAWN_TIME) {
+            coinTimer = 0;
+            Coin coin = coinPool.obtain();
+            float randomAngle = MathUtils.random(360);
+            coin.setAngleDeg(randomAngle);
+            coins.add(coin);
 
 
         }

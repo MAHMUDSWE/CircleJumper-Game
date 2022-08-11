@@ -19,20 +19,17 @@ public class Monster extends EntityBase {
 
     public void update(float delta) {
 
-        if(state.isJumping()){
+        if (state.isJumping()) {
             speed += acceleration * delta;
             //when reach max speed switching state to falling
-            if(speed >= GameConfig.MONSTER_MAX_SPEED)
-            {
+            if (speed >= GameConfig.MONSTER_MAX_SPEED) {
                 fall();
             }
-        }
-        else if(state.isFalling()){
+        } else if (state.isFalling()) {
             //falling down after we reached maximum speed
             speed -= acceleration * delta;
             //when speed is 0 switching speed to walking
-            if(speed <= 0)
-            {
+            if (speed <= 0) {
                 speed = 0;
                 walk();
             }
@@ -55,25 +52,25 @@ public class Monster extends EntityBase {
     public float getAngleDeg() {
         return angleDeg;
     }
-    public void jump()
-    {
+
+    public void jump() {
         state = MonsterState.JUMPING;
     }
-    public boolean isWalking()
-    {
+
+    public boolean isWalking() {
         return state.isWalking();
     }
-    public void reset(){
+
+    public void reset() {
         angleDeg = GameConfig.START_ANGLE;
     }
 
     // == private methods ==
-    private void fall()
-    {
+    private void fall() {
         state = MonsterState.FALLING;
     }
-    private void walk()
-    {
+
+    private void walk() {
         state = MonsterState.WALKING;
     }
 }

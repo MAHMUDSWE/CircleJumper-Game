@@ -93,14 +93,13 @@ public class GameRenderer implements Disposable {
 
         //coin
         renderer.setColor(Color.YELLOW);
-        for(Coin coin : controller.getCoins())
-        {
-            Rectangle coinBounds= coin.getBounds();
+        for (Coin coin : controller.getCoins()) {
+            Rectangle coinBounds = coin.getBounds();
             renderer.rect(
                     coinBounds.x, coinBounds.y,
-                    0,0,
+                    0, 0,
                     coinBounds.width, coinBounds.height,
-                    1,1,
+                    1, 1,
                     GameConfig.START_ANGLE - coin.getAngleDeg()
             );
 
