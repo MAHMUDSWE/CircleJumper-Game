@@ -27,7 +27,7 @@ public class GameRenderer implements Disposable {
     private Viewport viewport;
     private ShapeRenderer renderer;
      private Viewport hudViewport;
-     private bitmapFont font ;
+     private BitmapFont font ;
 
 
      private  final GlyphLayout layout = new GlyphLayout();
