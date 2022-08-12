@@ -2,11 +2,13 @@ package com.jga.jumper.screen.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.jga.jumper.common.GameManager;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
@@ -57,7 +59,7 @@ public class GameController {
 
     public void update(float delta) {
 
-        if(startWaitTimer>0) {
+        if (startWaitTimer > 0) {
             startWaitTimer -= delta;
             return;
         }
@@ -92,55 +94,136 @@ public class GameController {
         return obstacles;
     }
 
-    public  float getStartWaitTimer(){
+    public float getStartWaitTimer() {
         return startWaitTimer;
     }
 
+    //Spawning coins
     private void spawnCoins(float delta) {
         coinTimer += delta;
 
-        if (coins.size >= GameConfig.MAX_COINS) {
-            coinTimer = 0;
+        if (coinTimer < GameConfig.COIN_SPAWN_TIME) {
             return;
-
         }
 
-        if (coinTimer >= GameConfig.COIN_SPAWN_TIME) {
-            coinTimer = 0;
-            Coin coin = coinPool.obtain();
-            float randomAngle = MathUtils.random(360);
-            coin.setAngleDeg(randomAngle);
-            coins.add(coin);
+        coinTimer = 0;
+
+        if (coins.size == 0) {
+            addCoins();
         }
+    }
+
+    private void addCoins() {
+        int count = MathUtils.random(GameConfig.MAX_COINS);
+
+        for (int i = 0; i < count; i++) {
+            float randomAngle = MathUtils.random(360f);
+
+            boolean canSpawn = !isCoinNearBy(randomAngle) && !isMonsterNearBy(randomAngle);
+
+            if (canSpawn) {
+                Coin coin = coinPool.obtain();
+
+                if (isObstacleNearBy(randomAngle)) {
+                    coin.setOffset(true);
+                }
+
+                coin.setAngleDeg(randomAngle);
+                coins.add(coin);
+
+            }
+        }
+    }
+
+    private boolean isCoinNearBy(float angle) {
+        //check that there are no coins nearby min dist
+        angle = Math.abs(angle);
+
+        for (Coin coin : coins) {
+
+            float angleDeg = Math.abs(coin.getAngleDeg());
+
+            float diff = Math.abs(angleDeg - angle);
+
+            if (diff < GameConfig.MIN_ANG_DIST) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isMonsterNearBy(float angle) {
+
+        angle = Math.abs(angle);
+
+        float angleDeg = Math.abs(monster.getAngleDeg());
+
+        float playerDiff = Math.abs(angleDeg - angle);
+
+        if (playerDiff < GameConfig.MIN_ANG_DIST) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isObstacleNearBy(float angle) {
+
+        angle = Math.abs(angle);
+
+        for (Obstacle obstacle : obstacles) {
+            float angleDeg = Math.abs(obstacle.getAngleDeg());
+
+            float diff = Math.abs(angleDeg - angle);
+
+            if (diff < GameConfig.MIN_ANG_DIST) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //Spawning obstacles
     private void spawnObstacles(float delta) {
         obstacleTimer += delta;
 
-        if (obstacles.size >= GameConfig.MAX_OBSTACLES) {
-            obstacleTimer = 0;
+        if (obstacleTimer < GameConfig.OBSTACLE_SPAWN_TIME) {
             return;
         }
+        obstacleTimer = 0;
 
-        if (obstacleTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
-            obstacleTimer = 0;
-            Obstacle obstacle = obstaclePool.obtain();
-            float randomAngle = MathUtils.random(360);
-            obstacle.setAngleDeg(randomAngle);
-            obstacles.add(obstacle);
+        if (obstacles.size == 0) {
+            addObstacles();
         }
     }
 
-    private  void checkCollision()
-    {
+    private void addObstacles() {
+
+        int count = MathUtils.random(2, GameConfig.MAX_OBSTACLES);
+
+        for (int i = 0; i < count; i++) {
+            float randomAngle = monster.getAngleDeg() - i * GameConfig.MIN_ANG_DIST - MathUtils.random(60, 80);
+
+            boolean canSpawn = !isObstacleNearBy(randomAngle)
+                    && !isCoinNearBy(randomAngle)
+                    && !isMonsterNearBy(randomAngle);
+
+            if (canSpawn) {
+                Obstacle obstacle = obstaclePool.obtain();
+                obstacle.setAngleDeg(randomAngle);
+                obstacles.add(obstacle);
+            }
+        }
+    }
+
+    private void checkCollision() {
         //players<-> coins
-        for(int i=0;i<coins.size;i++)
-        {
+        for (int i = 0; i < coins.size; i++) {
             Coin coin = coins.get(i);
 
-            if(Intersection.overlaps(monster.getBounds(),coin.getBounds()))
-            {
+            if (Intersector.overlaps(monster.getBounds(), coin.getBounds())) {
                 GameManager.INSTANCE.addScore(GameConfig.COIN_SCORE);
                 coinPool.free(coin);
                 coins.removeIndex(i);
@@ -148,37 +231,31 @@ public class GameController {
             }
         }
         //players <-> obstacle
-        for(int i=0; i<obstacles.size;i++)
-        {
+        for (int i = 0; i < obstacles.size; i++) {
             Obstacle obstacle = obstacles.get(i);
-            if(Intersection.overlaps(monster.getBounds(),obstacle.getsensor()))
-            {
+            if (Intersector.overlaps(monster.getBounds(), obstacle.getSensor())) {
                 GameManager.INSTANCE.addScore(GameConfig.OBSTACLE_SCORE);
                 obstaclePool.free(obstacle);
                 obstacles.removeIndex(i);
 
-            } else if (Intersector.overlaps(monster.getBounds(),obstacle.getBounds() ))
-            {
+            } else if (Intersector.overlaps(monster.getBounds(), obstacle.getBounds())) {
                 restart();
             }
         }
 
     }
-    private void restart()
-    {
-         coinPool.freeAll(coins);
-         coins.clear();
-         obstaclePool.freeAll(obstacles);
-         obstacles.clear();
 
+    private void restart() {
+        coinPool.freeAll(coins);
+        coins.clear();
+        obstaclePool.freeAll(obstacles);
+        obstacles.clear();
 
-         monster.reset();
-         monster.setPosition(monsterStartX,monsterStartY);
+        monster.reset();
+        monster.setPosition(monsterStartX, monsterStartY);
 
-         GameManager.INSTANCE.reset();
-        startWaitTimer =  GameConfig.START_WAIT_TIME;
-        
-
+        GameManager.INSTANCE.reset();
+        startWaitTimer = GameConfig.START_WAIT_TIME;
     }
 
 }

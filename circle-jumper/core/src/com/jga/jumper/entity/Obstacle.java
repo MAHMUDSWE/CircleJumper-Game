@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.jga.jumper.config.GameConfig;
 import com.jga.util.entity.EntityBase;
 
-public class Obstacle extends EntityBase implements Pool.Poolable{
+public class Obstacle extends EntityBase implements Pool.Poolable {
 
     // == attributes ==
     private float angleDeg;

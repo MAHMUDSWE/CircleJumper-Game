@@ -186,18 +186,18 @@ public class GameRenderer implements Disposable {
                 GameConfig.HUD_HEIGHT - layout.height
         );
 
-        float startWaitTimer = controller.getStartWaittimer();
-        if(startWaitTimer>=0)
-        {
+        float startWaitTimer = controller.getStartWaitTimer();
+
+        if (startWaitTimer >= 0) {
             int waitTime = (int) startWaitTimer;
             String waitTimerString = waitTime == 0 ? "GO" : "" + waitTime;
-            layout.setText(font,waitTimeString);
+            layout.setText(font, waitTimerString);
 
-            font.draw(batch,layout,
-
-                    (GameConfig.HUD_WIDTH - layout.width) / 2f;
-                     (GameConfig.HUD_HEIGHT + layout.height)/2f
-                    );
+            font.draw(
+                    batch, layout,
+                    (GameConfig.HUD_WIDTH - layout.width) / 2f,
+                    (GameConfig.HUD_HEIGHT + layout.height) / 2f
+            );
         }
     }
 }

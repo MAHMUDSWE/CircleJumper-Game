@@ -8,6 +8,7 @@ import com.jga.util.entity.EntityBase;
 public class Coin extends EntityBase implements Pool.Poolable {
 
     private float angleDeg;
+    private boolean offset;
 
     public Coin() {
         setSize(GameConfig.COIN_SIZE, GameConfig.COIN_SIZE);
@@ -19,6 +20,10 @@ public class Coin extends EntityBase implements Pool.Poolable {
 
         float radius = GameConfig.PLANET_HALF_SIZE;
 
+        if (offset) {
+            radius += GameConfig.COIN_SIZE;
+        }
+
         float originX = GameConfig.WORLD_CENTER_X;
         float originY = GameConfig.WORLD_CENTER_Y;
 
@@ -29,12 +34,16 @@ public class Coin extends EntityBase implements Pool.Poolable {
 
     }
 
+    public void setOffset(boolean offset) {
+        this.offset = offset;
+    }
+
     public float getAngleDeg() {
         return angleDeg;
     }
 
     @Override
     public void reset() {
-
+        offset = false;
     }
 }
