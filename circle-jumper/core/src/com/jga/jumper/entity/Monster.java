@@ -65,6 +65,9 @@ public class Monster extends EntityBase {
         angleDeg = GameConfig.START_ANGLE;
     }
 
+    public void reset() {
+        angleDeg = GameConfig.START_ANGLE;
+    }
     // == private methods ==
     private void fall() {
         state = MonsterState.FALLING;
