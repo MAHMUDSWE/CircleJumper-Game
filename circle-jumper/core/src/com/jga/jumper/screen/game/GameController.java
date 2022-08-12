@@ -33,6 +33,8 @@ public class GameController {
 
     private boolean calledUpdate = false;
 
+    private float startWaitTimer = GameConfig.START_WAIT_TIME;
+
     //==constructors==
     public GameController() {
         init();
@@ -55,6 +57,13 @@ public class GameController {
 
     public void update(float delta) {
 
+        if(startWaitTimer>0) {
+            startWaitTimer -= delta;
+            return;
+        }
+
+        GameManager.INSTANCE.updateDisplayScore(delta);
+
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && monster.isWalking()) {
             monster.jump();
         }
@@ -63,6 +72,8 @@ public class GameController {
 
         spawnObstacles(delta);
         spawnCoins(delta);
+        checkCollision();
+
     }
 
     public Planet getPlanet() {
@@ -79,6 +90,10 @@ public class GameController {
 
     public Array<Obstacle> getObstacles() {
         return obstacles;
+    }
+
+    public  float getStartWaitTimer(){
+        return startWaitTimer;
     }
 
     private void spawnCoins(float delta) {
@@ -108,7 +123,7 @@ public class GameController {
             return;
         }
 
-        if (coinTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
+        if (obstacleTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
             obstacleTimer = 0;
             Obstacle obstacle = obstaclePool.obtain();
             float randomAngle = MathUtils.random(360);
@@ -116,4 +131,54 @@ public class GameController {
             obstacles.add(obstacle);
         }
     }
+
+    private  void checkCollision()
+    {
+        //players<-> coins
+        for(int i=0;i<coins.size;i++)
+        {
+            Coin coin = coins.get(i);
+
+            if(Intersection.overlaps(monster.getBounds(),coin.getBounds()))
+            {
+                GameManager.INSTANCE.addScore(GameConfig.COIN_SCORE);
+                coinPool.free(coin);
+                coins.removeIndex(i);
+
+            }
+        }
+        //players <-> obstacle
+        for(int i=0; i<obstacles.size;i++)
+        {
+            Obstacle obstacle = obstacles.get(i);
+            if(Intersection.overlaps(monster.getBounds(),obstacle.getsensor()))
+            {
+                GameManager.INSTANCE.addScore(GameConfig.OBSTACLE_SCORE);
+                obstaclePool.free(obstacle);
+                obstacles.removeIndex(i);
+
+            } else if (Intersector.overlaps(monster.getBounds(),obstacle.getBounds() ))
+            {
+                restart();
+            }
+        }
+
+    }
+    private void restart()
+    {
+         coinPool.freeAll(coins);
+         coins.clear();
+         obstaclePool.freeAll(obstacles);
+         obstacles.clear();
+
+
+         monster.reset();
+         monster.setPosition(monsterStartX,monsterStartY);
+
+         GameManager.INSTANCE.reset();
+        startWaitTimer =  GameConfig.START_WAIT_TIME;
+        
+
+    }
+
 }
