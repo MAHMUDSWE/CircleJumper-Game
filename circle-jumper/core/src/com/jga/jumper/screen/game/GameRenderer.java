@@ -19,14 +19,27 @@ public class GameRenderer implements Disposable {
 
     private final GameController controller;
 
+    private  final SpriteBatch batch;
+    private final AssetManager assetManager;
+
+
     private OrthographicCamera camera;
     private Viewport viewport;
     private ShapeRenderer renderer;
+     private Viewport hudViewport;
+     private BitmapFont font ;
+
+
+     private  final GlyphLayout layout = new GlyphLayout();
+
+
 
     private DebugCameraController debugCameraController;
 
-    public GameRenderer(GameController controller) {
+    public GameRenderer(GameController controller, SpriteBatch batch ,AssetManager assetManager) {
         this.controller = controller;
+         this.batch =  batch;
+         this.assetManager =assetManager ;
         init();
     }
 
@@ -34,6 +47,13 @@ public class GameRenderer implements Disposable {
         camera = new OrthographicCamera();
         viewport = new FitViewport(GameConfig.WORLD_WIDTH, GameConfig.WORLD_HEIGHT, camera);
         renderer = new ShapeRenderer();
+
+
+
+        hudViewport = new FitViewport(GameConfig.HUD_WIDTH,GameConfig.HUD_HEIGHT);
+
+        font = assetManager.get(AssetDescriptors.FONT);
+
 
         debugCameraController = new DebugCameraController();
         debugCameraController.setStartPosition(GameConfig.WORLD_CENTER_X, GameConfig.WORLD_CENTER_Y);
@@ -46,10 +66,14 @@ public class GameRenderer implements Disposable {
 
         renderDebug();
 
+        renderHud();
+
+
     }
 
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        hudViewport.update(width,height,true);
         ViewportUtils.debugPixelsPerUnit(viewport);
 
     }
@@ -104,5 +128,32 @@ public class GameRenderer implements Disposable {
             );
 
         }
+    }
+    private  void renderHud()
+    {
+        hudViewport.apply();
+        batch.setProjectionMatrix(hudViewport.getCamera().combined);
+        batch.begin();
+
+        drawHud();
+
+        batch.end();
+
+    }
+    private void drawHud()
+    {
+        // high score
+        float padding =20;
+        String highScoreString = "HIGH SCORE:"  +  GameManager.INSTANCE.getDisplayHighScore();
+        layout.setText(font,highScoreString);
+         font.draw(batch,layout,padding,GameConfig.HUD_HEIGHT - layout.height );
+
+         // score
+        String scoreString = "SCORE:" + GameManager.INSTANCE.getDisplayscore();
+        layout.setText(font,scoreString);
+        font.draw(batch,layout,
+                GameConfig.HUD_WIDTH - layout.width - padding,
+                GameCOnfig.HUD_HEIGHT - layout.height
+                );
     }
 }
