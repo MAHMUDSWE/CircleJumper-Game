@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Pools;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
+import com.jga.jumper.entity.Obstacle;
 import com.jga.jumper.entity.Planet;
 
 public class GameController {
@@ -22,6 +23,10 @@ public class GameController {
     private final Array<Coin> coins = new Array<Coin>();
     private final Pool<Coin> coinPool = Pools.get(Coin.class, 10);
     private float coinTimer;
+
+    private final Array<Obstacle> obstacles = new Array<Obstacle>();
+    private final Pool<Obstacle> obstaclePool = Pools.get(Obstacle.class, 10);
+    private float obstacleTimer;
 
     private float monsterStartX;
     private float monsterStartY;
@@ -55,8 +60,9 @@ public class GameController {
         }
 
         monster.update(delta);
-        spawnCoins(delta);
 
+        spawnObstacles(delta);
+        spawnCoins(delta);
     }
 
     public Planet getPlanet() {
@@ -71,6 +77,10 @@ public class GameController {
         return coins;
     }
 
+    public Array<Obstacle> getObstacles() {
+        return obstacles;
+    }
+
     private void spawnCoins(float delta) {
         coinTimer += delta;
 
@@ -80,15 +90,30 @@ public class GameController {
 
         }
 
-
         if (coinTimer >= GameConfig.COIN_SPAWN_TIME) {
             coinTimer = 0;
             Coin coin = coinPool.obtain();
             float randomAngle = MathUtils.random(360);
             coin.setAngleDeg(randomAngle);
             coins.add(coin);
+        }
+    }
 
+    //Spawning obstacles
+    private void spawnObstacles(float delta) {
+        obstacleTimer += delta;
 
+        if (obstacles.size >= GameConfig.MAX_OBSTACLES) {
+            obstacleTimer = 0;
+            return;
+        }
+
+        if (coinTimer >= GameConfig.OBSTACLE_SPAWN_TIME) {
+            obstacleTimer = 0;
+            Obstacle obstacle = obstaclePool.obtain();
+            float randomAngle = MathUtils.random(360);
+            obstacle.setAngleDeg(randomAngle);
+            obstacles.add(obstacle);
         }
     }
 }
