@@ -253,6 +253,7 @@ public class GameController {
 
         monster.reset();
         monster.setPosition(monsterStartX, monsterStartY);
+        GameManager.INSTANCE.updateHighScore();
 
         GameManager.INSTANCE.reset();
         startWaitTimer = GameConfig.START_WAIT_TIME;
