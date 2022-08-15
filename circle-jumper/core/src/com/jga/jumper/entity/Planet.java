@@ -4,36 +4,35 @@ package com.jga.jumper.entity;
 import com.badlogic.gdx.math.Circle;
 import com.jga.jumper.config.GameConfig;
 
-public class Planet
-{
+public class Planet {
     // attributes
     private float x;
-    private  float y;
+    private float y;
 
-    private float width =1;
-    private float height= 1;
+    private float width = 1;
+    private float height = 1;
 
     private Circle bounds;
 
-     //== constructor
+    //== constructor
 
-     public Planet()
-     {
-         bounds =new Circle(x,y, GameConfig.PLANET_HALF_SIZE);
+    public Planet() {
+        bounds = new Circle(x, y, GameConfig.PLANET_HALF_SIZE);
+        setSize(GameConfig.PLANET_SIZE, GameConfig.PLANET_SIZE);
 
-     }
-      //== public methods
-    public void setPosition(float x,float y)
-    {
-        this.x=x;
-        this.y=y;
+    }
+
+    //== public methods
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
         updateBounds();
 
     }
-    public void setSize(float width, float height)
-    {
-        this.width=width;
-        this.height=height;
+
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
         updateBounds();
 
     }
@@ -81,10 +80,12 @@ public class Planet
     public Circle getBounds() {
         return bounds;
     }
-    public void updateBounds()
-    {
-        bounds.setPosition(x, y);
+
+    public void updateBounds() {
+        float halfWidth = getWidth() / 2f;
+        float halfHeight = getHeight() / 2f;
+        bounds.setPosition(x + halfWidth, y + halfHeight);
 
     }
- //  nothing
+    //  nothing
 }

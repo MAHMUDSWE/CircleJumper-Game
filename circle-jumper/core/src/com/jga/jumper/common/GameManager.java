@@ -1,5 +1,9 @@
 package com.jga.jumper.common;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.jga.jumper.CircleJumperGame;
+
 public class GameManager {
 
     public static final GameManager INSTANCE = new GameManager();
@@ -12,9 +16,9 @@ public class GameManager {
 
     private GameManager() {
 
-        prefs =  Gdx.app.getPreferences(CircleJumperGame.class.getSimpleName());
-        highScore = prefs.getInterger(HIGH_SCORE_KEY, 0);
-        displayHighScore = highScore ;
+        prefs = Gdx.app.getPreferences(CircleJumperGame.class.getSimpleName());
+        highScore = prefs.getInteger(HIGH_SCORE_KEY, 0);
+        displayHighScore = highScore;
 
     }
 
@@ -30,15 +34,16 @@ public class GameManager {
             highScore = score;
         }
     }
-        public void updateHighScore(){
-         if(score<highScore)
-         {
-             return ;
-         }
-         highScore = score;
-         prefs.putInterger(HIGH_SCORE_KEY, highScore);
-         prefs.flush();
+
+    public void updateHighScore() {
+        if (score < highScore) {
+            return;
         }
+        highScore = score;
+        prefs.putInteger(HIGH_SCORE_KEY, highScore);
+        prefs.flush();
+    }
+
     public void updateDisplayScore(float delta) {
         if (displayScore < score) {
             displayScore = Math.min(score, displayScore + (int) (100 * delta));
