@@ -49,9 +49,9 @@ public class GameRenderer implements Disposable {
     private TextureRegion backgroundRegion;
     private TextureRegion planetRegion;
 
-    private TextureRegion obstacleRegion;
-    private TextureRegion coinRegion;
-    private TextureRegion monsterRegion;
+    private Animation obstacleAnimation;
+    private  Animation coinAnimation;
+    private Animation monsterAnimation;
 
     public GameRenderer(GameController controller, SpriteBatch batch, AssetManager assetManager) {
         this.controller = controller;
@@ -79,9 +79,16 @@ public class GameRenderer implements Disposable {
         backgroundRegion = gameplayAtlas.findRegion(RegionNames.BACKGROUND);
         planetRegion = gameplayAtlas.findRegion(RegionNames.PLANET);
 
-        obstacleRegion = gameplayAtlas.findRegions(RegionNames.OBSTACLE).first();
-        coinRegion = gameplayAtlas.findRegions(RegionNames.COIN).first();
-        monsterRegion = gameplayAtlas.findRegions(RegionNames.PLAYER).first();
+        obstacleAnimation = new Animation(0.1f,
+              gameplayAtlas.findRegions(RegionNames.OBSTACLE),
+              Animation.PlayMode.LOOP_PINGPONG);
+        coinAnimation = new Animation(0.2f,
+              gameplayAtlas.findRegions(RegionNames.COIN),
+              Animation.PlayMode.LOOP_PINGPONG);
+        monsterAnimation = new Animation(0.05f,
+
+             gameplayAtlas.findRegions(RegionNames.PLAYER),
+             Animation.PlayMode.LOOP_PINGPONG);
 
     }
 
@@ -127,7 +134,7 @@ public class GameRenderer implements Disposable {
 
         //obstacles
         Array<Obstacle> obstacles = controller.getObstacles();
-
+            TextureRegion obstacleRegion = obstacleAnimation.getKeyFrame(controller.getAnimationTime());
         for (Obstacle obstacle : obstacles) {
             batch.draw(obstacleRegion,
                     obstacle.getX(), obstacle.getY(),
@@ -147,19 +154,20 @@ public class GameRenderer implements Disposable {
 
         //coins
         Array<Coin> coins = controller.getCoins();
-
+        TextureRegion coinRegion = coinAnimation.getKeyFrame(controller.getAniamtionTime());
         for (Coin coin : coins) {
             batch.draw(coinRegion,
                     coin.getX(), coin.getY(),
                     0, 0,
                     coin.getWidth(), coin.getHeight(),
-                    1.0f, 1.0f,
+                    coin.getScale(),coin.getScale(),
                     GameConfig.START_ANGLE - coin.getAngleDeg()
             );
         }
 
         //monster
         Monster monster = controller.getMonster();
+        TextureRegion mosterRegion = monsterAnimation.getKeyFrame(controller.getAnimation());
 
         batch.draw(monsterRegion,
                 monster.getX(), monster.getY(),
@@ -211,7 +219,7 @@ public class GameRenderer implements Disposable {
                     coinBounds.x, coinBounds.y,
                     0, 0,
                     coinBounds.width, coinBounds.height,
-                    1, 1,
+                    coin.getScale(),coin.getScale(),
                     GameConfig.START_ANGLE - coin.getAngleDeg()
             );
 
