@@ -3,6 +3,7 @@ package com.jga.jumper.screen.game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -50,7 +51,7 @@ public class GameRenderer implements Disposable {
     private TextureRegion planetRegion;
 
     private Animation obstacleAnimation;
-    private  Animation coinAnimation;
+    private Animation coinAnimation;
     private Animation monsterAnimation;
 
     public GameRenderer(GameController controller, SpriteBatch batch, AssetManager assetManager) {
@@ -80,15 +81,15 @@ public class GameRenderer implements Disposable {
         planetRegion = gameplayAtlas.findRegion(RegionNames.PLANET);
 
         obstacleAnimation = new Animation(0.1f,
-              gameplayAtlas.findRegions(RegionNames.OBSTACLE),
-              Animation.PlayMode.LOOP_PINGPONG);
+                gameplayAtlas.findRegions(RegionNames.OBSTACLE),
+                Animation.PlayMode.LOOP_PINGPONG);
         coinAnimation = new Animation(0.2f,
-              gameplayAtlas.findRegions(RegionNames.COIN),
-              Animation.PlayMode.LOOP_PINGPONG);
+                gameplayAtlas.findRegions(RegionNames.COIN),
+                Animation.PlayMode.LOOP_PINGPONG);
         monsterAnimation = new Animation(0.05f,
 
-             gameplayAtlas.findRegions(RegionNames.PLAYER),
-             Animation.PlayMode.LOOP_PINGPONG);
+                gameplayAtlas.findRegions(RegionNames.PLAYER),
+                Animation.PlayMode.LOOP_PINGPONG);
 
     }
 
@@ -134,7 +135,8 @@ public class GameRenderer implements Disposable {
 
         //obstacles
         Array<Obstacle> obstacles = controller.getObstacles();
-            TextureRegion obstacleRegion = obstacleAnimation.getKeyFrame(controller.getAnimationTime());
+        TextureRegion obstacleRegion = (TextureRegion) obstacleAnimation.getKeyFrame(controller.getAnimationTime());
+
         for (Obstacle obstacle : obstacles) {
             batch.draw(obstacleRegion,
                     obstacle.getX(), obstacle.getY(),
@@ -154,20 +156,20 @@ public class GameRenderer implements Disposable {
 
         //coins
         Array<Coin> coins = controller.getCoins();
-        TextureRegion coinRegion = coinAnimation.getKeyFrame(controller.getAniamtionTime());
+        TextureRegion coinRegion = (TextureRegion) coinAnimation.getKeyFrame(controller.getAnimationTime());
         for (Coin coin : coins) {
             batch.draw(coinRegion,
                     coin.getX(), coin.getY(),
                     0, 0,
                     coin.getWidth(), coin.getHeight(),
-                    coin.getScale(),coin.getScale(),
+                    coin.getScale(), coin.getScale(),
                     GameConfig.START_ANGLE - coin.getAngleDeg()
             );
         }
 
         //monster
         Monster monster = controller.getMonster();
-        TextureRegion mosterRegion = monsterAnimation.getKeyFrame(controller.getAnimation());
+        TextureRegion monsterRegion = (TextureRegion) monsterAnimation.getKeyFrame(controller.getAnimationTime());
 
         batch.draw(monsterRegion,
                 monster.getX(), monster.getY(),
@@ -219,7 +221,7 @@ public class GameRenderer implements Disposable {
                     coinBounds.x, coinBounds.y,
                     0, 0,
                     coinBounds.width, coinBounds.height,
-                    coin.getScale(),coin.getScale(),
+                    coin.getScale(), coin.getScale(),
                     GameConfig.START_ANGLE - coin.getAngleDeg()
             );
 

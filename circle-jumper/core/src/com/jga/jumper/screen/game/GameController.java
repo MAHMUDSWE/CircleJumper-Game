@@ -66,7 +66,7 @@ public class GameController {
 
     public void update(float delta) {
 
-        animationTime += delta ;
+        animationTime += delta;
         if (startWaitTimer > 0) {
             startWaitTimer -= delta;
             return;
@@ -79,12 +79,10 @@ public class GameController {
         }
 
         monster.update(delta);
-        for(Obstacle obstacle : obstacles)
-        {
+        for (Obstacle obstacle : obstacles) {
             obstacle.update(delta);
         }
-        for(Coin coin : coins )
-        {
+        for (Coin coin : coins) {
             coin.update(delta);
         }
         spawnObstacles(delta);
@@ -113,8 +111,7 @@ public class GameController {
         return startWaitTimer;
     }
 
-    public float getAnimationTime()
-    {
+    public float getAnimationTime() {
         return animationTime;
     }
 
@@ -277,7 +274,7 @@ public class GameController {
 
         GameManager.INSTANCE.reset();
         startWaitTimer = GameConfig.START_WAIT_TIME;
-        animationTime =  0f;
+        animationTime = 0f;
     }
 
 }

@@ -7,24 +7,23 @@ import com.jga.util.entity.EntityBase;
 
 public class Coin extends EntityBase implements Pool.Poolable {
 
-    private  static  final float SCALE_MAX = 1.0f;
+    private static final float SCALE_MAX = 1.0f;
     private float angleDeg;
     private boolean offset;
-    private  float scale;
+    private float scale;
 
 
     public Coin() {
         setSize(GameConfig.COIN_SIZE, GameConfig.COIN_SIZE);
 
     }
-    // methods
-    public  void  update(float delta)
-    {
-         if(scale<SCALE_MAX)
-         {
-             scale+=delta;
 
-         }
+    // methods
+    public void update(float delta) {
+        if (scale < SCALE_MAX) {
+            scale += delta;
+
+        }
     }
 
     public void setAngleDeg(float value) {
@@ -54,10 +53,10 @@ public class Coin extends EntityBase implements Pool.Poolable {
         return angleDeg;
     }
 
-    public float getScale()
-    {
+    public float getScale() {
         return scale;
     }
+
     @Override
     public void reset() {
 

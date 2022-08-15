@@ -12,7 +12,7 @@ public class Obstacle extends EntityBase implements Pool.Poolable {
     private float angleDeg;
     private Rectangle sensor = new Rectangle();
     private float sensorAngleDeg;
-    private  float radius = GameConfig.PLANET_HALF_SIZE - GameConfig.OBSTACLE_SIZE;
+    private float radius = GameConfig.PLANET_HALF_SIZE - GameConfig.OBSTACLE_SIZE;
 
 
     // == constructors ==
@@ -20,28 +20,30 @@ public class Obstacle extends EntityBase implements Pool.Poolable {
         setSize(GameConfig.OBSTACLE_SIZE, GameConfig.OBSTACLE_SIZE);
     }
 
-        public void update(float delta) {
+    public void update(float delta) {
 
-            //obstacle
-            // float radius = GameConfig.PLANET_HALF_SIZE;
-            if (radius < gameConfig.PLANET_HALF_SIZE) {
-                float originX = GameConfig.WORLD_CENTER_X;
-                float originY = GameConfig.WORLD_CENTER_Y;
+        //obstacle
+        // float radius = GameConfig.PLANET_HALF_SIZE;
+        if (radius < GameConfig.PLANET_HALF_SIZE) {
+            radius += delta;
 
-                float newX = originX + MathUtils.cosDeg(-angleDeg) * radius;
-                float newY = originY + MathUtils.sinDeg(-angleDeg) * radius;
+            float originX = GameConfig.WORLD_CENTER_X;
+            float originY = GameConfig.WORLD_CENTER_Y;
 
-                setPosition(newX, newY);
+            float newX = originX + MathUtils.cosDeg(-angleDeg) * radius;
+            float newY = originY + MathUtils.sinDeg(-angleDeg) * radius;
 
-                //sensor
-                float sensorX = originX + MathUtils.cosDeg(-sensorAngleDeg) * radius;
-                float sensorY = originY + MathUtils.sinDeg(-sensorAngleDeg) * radius;
+            setPosition(newX, newY);
 
-                sensor.set(sensorX, sensorY, getWidth(), getHeight());
+            //sensor
+            float sensorX = originX + MathUtils.cosDeg(-sensorAngleDeg) * radius;
+            float sensorY = originY + MathUtils.sinDeg(-sensorAngleDeg) * radius;
 
-            }
+            sensor.set(sensorX, sensorY, getWidth(), getHeight());
 
         }
+
+    }
 
     public void setAngleDeg(float value) {
         angleDeg = value % 360;
