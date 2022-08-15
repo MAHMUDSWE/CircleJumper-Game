@@ -9,11 +9,13 @@ import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.jga.jumper.common.GameManager;
+import com.jga.jumper.common.GameState;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
 import com.jga.jumper.entity.Obstacle;
 import com.jga.jumper.entity.Planet;
+import com.jga.jumper.screen.menu.OverlayCallback;
 
 public class GameController {
 
@@ -39,6 +41,10 @@ public class GameController {
 
     private float animationTime;
 
+    private GameState gameState = GameState.MENU;
+
+    private OverlayCallback callback;
+
 
     //==constructors==
     public GameController() {
@@ -62,15 +68,36 @@ public class GameController {
                 monsterStartX, monsterStartY
 
         );
+
+        callback = new OverlayCallback() {
+            @Override
+            public void home() {
+                gameState = GameState.MENU;
+            }
+
+            @Override
+            public void ready() {
+                restart();
+                gameState = GameState.READY;
+            }
+        };
     }
 
     public void update(float delta) {
 
-        animationTime += delta;
-        if (startWaitTimer > 0) {
+        if (gameState.isReady() && startWaitTimer > 0) {
             startWaitTimer -= delta;
+
+            if (startWaitTimer <= 0) {
+                gameState = GameState.PLAYING;
+            }
+        }
+
+        if (!gameState.isPlaying()) {
             return;
         }
+
+        animationTime += delta;
 
         GameManager.INSTANCE.updateDisplayScore(delta);
 
@@ -113,6 +140,30 @@ public class GameController {
 
     public float getAnimationTime() {
         return animationTime;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public OverlayCallback getCallback() {
+        return callback;
+    }
+
+    public void restart() {
+        coinPool.freeAll(coins);
+        coins.clear();
+        obstaclePool.freeAll(obstacles);
+        obstacles.clear();
+
+        monster.reset();
+        monster.setPosition(monsterStartX, monsterStartY);
+        GameManager.INSTANCE.updateHighScore();
+
+        GameManager.INSTANCE.reset();
+        startWaitTimer = GameConfig.START_WAIT_TIME;
+        animationTime = 0f;
+        gameState = GameState.READY;
     }
 
     //Spawning coins
@@ -256,25 +307,11 @@ public class GameController {
                 obstacles.removeIndex(i);
 
             } else if (Intersector.overlaps(monster.getBounds(), obstacle.getBounds())) {
-                restart();
+                gameState = GameState.GAME_OVER;
             }
         }
 
     }
 
-    private void restart() {
-        coinPool.freeAll(coins);
-        coins.clear();
-        obstaclePool.freeAll(obstacles);
-        obstacles.clear();
-
-        monster.reset();
-        monster.setPosition(monsterStartX, monsterStartY);
-        GameManager.INSTANCE.updateHighScore();
-
-        GameManager.INSTANCE.reset();
-        startWaitTimer = GameConfig.START_WAIT_TIME;
-        animationTime = 0f;
-    }
 
 }

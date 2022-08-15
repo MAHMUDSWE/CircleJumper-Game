@@ -60,4 +60,8 @@ public class GameManager {
     public int getDisplayHighScore() {
         return displayHighScore;
     }
+
+    public int getHighScore() {
+        return highScore;
+    }
 }

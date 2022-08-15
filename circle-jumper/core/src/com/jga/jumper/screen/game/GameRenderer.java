@@ -1,5 +1,6 @@
 package com.jga.jumper.screen.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -19,11 +22,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.jga.jumper.assets.AssetDescriptors;
 import com.jga.jumper.assets.RegionNames;
 import com.jga.jumper.common.GameManager;
+import com.jga.jumper.common.GameState;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
 import com.jga.jumper.entity.Obstacle;
 import com.jga.jumper.entity.Planet;
+import com.jga.jumper.screen.menu.MenuOverlay;
 import com.jga.util.ViewportUtils;
 import com.jga.util.debug.DebugCameraController;
 
@@ -54,6 +59,9 @@ public class GameRenderer implements Disposable {
     private Animation coinAnimation;
     private Animation monsterAnimation;
 
+    private Stage hudStage;
+    private MenuOverlay menuOverlay;
+
     public GameRenderer(GameController controller, SpriteBatch batch, AssetManager assetManager) {
         this.controller = controller;
         this.batch = batch;
@@ -68,8 +76,12 @@ public class GameRenderer implements Disposable {
 
 
         hudViewport = new FitViewport(GameConfig.HUD_WIDTH, GameConfig.HUD_HEIGHT);
+        hudStage = new Stage(hudViewport, batch);
+
 
         font = assetManager.get(AssetDescriptors.FONT);
+
+        Skin skin = assetManager.get(AssetDescriptors.SKIN);
 
 
         debugCameraController = new DebugCameraController();
@@ -91,6 +103,12 @@ public class GameRenderer implements Disposable {
                 gameplayAtlas.findRegions(RegionNames.PLAYER),
                 Animation.PlayMode.LOOP_PINGPONG);
 
+        menuOverlay = new MenuOverlay(skin, controller.getCallback());
+
+        hudStage.addActor(menuOverlay);
+//        hudStage.setDebugAll(true);
+
+        Gdx.input.setInputProcessor(hudStage);
     }
 
     public void render(float delta) {
@@ -255,13 +273,27 @@ public class GameRenderer implements Disposable {
 
     private void renderHud() {
         hudViewport.apply();
-        batch.setProjectionMatrix(hudViewport.getCamera().combined);
-        batch.begin();
 
-        drawHud();
+        menuOverlay.setVisible(false);
 
-        batch.end();
+        GameState gameState = controller.getGameState();
 
+        if (gameState.isPlayingOrReady()) {
+            batch.setProjectionMatrix(hudViewport.getCamera().combined);
+            batch.begin();
+
+            drawHud();
+
+            batch.end();
+            return;
+        }
+        if (gameState.isMenu() && !menuOverlay.isVisible()) {
+            menuOverlay.updateLabel();
+            menuOverlay.setVisible(true);
+        }
+
+        hudStage.act();
+        hudStage.draw();
     }
 
     private void drawHud() {
