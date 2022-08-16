@@ -61,6 +61,8 @@ public class GameRenderer implements Disposable {
 
     private Stage hudStage;
     private MenuOverlay menuOverlay;
+    private  GameOverOverlay gameOverOverlay;
+
 
     public GameRenderer(GameController controller, SpriteBatch batch, AssetManager assetManager) {
         this.controller = controller;
@@ -104,9 +106,12 @@ public class GameRenderer implements Disposable {
                 Animation.PlayMode.LOOP_PINGPONG);
 
         menuOverlay = new MenuOverlay(skin, controller.getCallback());
+        gameOverOverlay = new GameOverOverlay(Skin,controller/getCallback());
 
         hudStage.addActor(menuOverlay);
 //        hudStage.setDebugAll(true);
+        hudStage.addActor(gameOverOverlay);
+      //   hudStage.setDebugAll(true);
 
         Gdx.input.setInputProcessor(hudStage);
     }
@@ -275,6 +280,7 @@ public class GameRenderer implements Disposable {
         hudViewport.apply();
 
         menuOverlay.setVisible(false);
+        gameOverOverlay.setVisible(false);
 
         GameState gameState = controller.getGameState();
 
@@ -290,6 +296,9 @@ public class GameRenderer implements Disposable {
         if (gameState.isMenu() && !menuOverlay.isVisible()) {
             menuOverlay.updateLabel();
             menuOverlay.setVisible(true);
+        }else if(gameState.isGameOver() && ! gameOverOverlay.isVisible()) {
+                gameOverOverlay.updateLabels();
+                gameOverOverlay.setVisible(true);
         }
 
         hudStage.act();
