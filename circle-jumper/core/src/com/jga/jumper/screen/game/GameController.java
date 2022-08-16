@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.jga.jumper.common.GameManager;
 import com.jga.jumper.common.GameState;
+import com.jga.jumper.common.SoundListener;
 import com.jga.jumper.config.GameConfig;
 import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
@@ -21,6 +22,8 @@ public class GameController {
 
     private static final Logger log = new Logger(GameController.class.getName(), Logger.DEBUG);
     // == attributes ==
+    private final SoundListener listener;
+
     private Planet planet;
     private Monster monster;
 
@@ -47,9 +50,9 @@ public class GameController {
 
 
     //==constructors==
-    public GameController() {
+    public GameController(SoundListener listener) {
+        this.listener = listener;
         init();
-
     }
 
     private void init() {
@@ -102,6 +105,7 @@ public class GameController {
         GameManager.INSTANCE.updateDisplayScore(delta);
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && monster.isWalking()) {
+           listener.jump();
             monster.jump();
         }
 
@@ -295,6 +299,7 @@ public class GameController {
                 GameManager.INSTANCE.addScore(GameConfig.COIN_SCORE);
                 coinPool.free(coin);
                 coins.removeIndex(i);
+                listener.hitCoin();
 
             }
         }
@@ -307,6 +312,7 @@ public class GameController {
                 obstacles.removeIndex(i);
 
             } else if (Intersector.overlaps(monster.getBounds(), obstacle.getBounds())) {
+               listener.lose();
                 gameState = GameState.GAME_OVER;
             }
         }

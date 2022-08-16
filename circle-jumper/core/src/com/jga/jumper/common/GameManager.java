@@ -65,7 +65,7 @@ public class GameManager {
         return highScore;
     }
 
-    public int getScore(){
+    public int getScore() {
         return score;
     }
 }

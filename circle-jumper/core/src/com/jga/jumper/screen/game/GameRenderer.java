@@ -28,6 +28,7 @@ import com.jga.jumper.entity.Coin;
 import com.jga.jumper.entity.Monster;
 import com.jga.jumper.entity.Obstacle;
 import com.jga.jumper.entity.Planet;
+import com.jga.jumper.screen.menu.GameOverOverlay;
 import com.jga.jumper.screen.menu.MenuOverlay;
 import com.jga.util.ViewportUtils;
 import com.jga.util.debug.DebugCameraController;
@@ -61,7 +62,7 @@ public class GameRenderer implements Disposable {
 
     private Stage hudStage;
     private MenuOverlay menuOverlay;
-    private  GameOverOverlay gameOverOverlay;
+    private GameOverOverlay gameOverOverlay;
 
 
     public GameRenderer(GameController controller, SpriteBatch batch, AssetManager assetManager) {
@@ -106,12 +107,12 @@ public class GameRenderer implements Disposable {
                 Animation.PlayMode.LOOP_PINGPONG);
 
         menuOverlay = new MenuOverlay(skin, controller.getCallback());
-        gameOverOverlay = new GameOverOverlay(Skin,controller/getCallback());
+        gameOverOverlay = new GameOverOverlay(skin, controller.getCallback());
 
         hudStage.addActor(menuOverlay);
 //        hudStage.setDebugAll(true);
         hudStage.addActor(gameOverOverlay);
-      //   hudStage.setDebugAll(true);
+        //   hudStage.setDebugAll(true);
 
         Gdx.input.setInputProcessor(hudStage);
     }
@@ -296,9 +297,9 @@ public class GameRenderer implements Disposable {
         if (gameState.isMenu() && !menuOverlay.isVisible()) {
             menuOverlay.updateLabel();
             menuOverlay.setVisible(true);
-        }else if(gameState.isGameOver() && ! gameOverOverlay.isVisible()) {
-                gameOverOverlay.updateLabels();
-                gameOverOverlay.setVisible(true);
+        } else if (gameState.isGameOver() && !gameOverOverlay.isVisible()) {
+            gameOverOverlay.updateLabels();
+            gameOverOverlay.setVisible(true);
         }
 
         hudStage.act();
