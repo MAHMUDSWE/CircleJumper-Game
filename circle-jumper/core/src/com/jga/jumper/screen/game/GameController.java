@@ -48,6 +48,10 @@ public class GameController {
 
     private OverlayCallback callback;
 
+    private  final Array<FloatingScore> floatingScore = new Array<FloatingScore>();
+    private Pool<FloatingScore>floatingScorePool= Pools.get(FloatingScore.class);
+
+
 
     //==constructors==
     public GameController(SoundListener listener) {
@@ -116,6 +120,16 @@ public class GameController {
         for (Coin coin : coins) {
             coin.update(delta);
         }
+
+        for(int i=0;i<floatingScore.size;i++){
+            FloatingScore floatingScore = floatingScore.get(i);
+            floatingScore.update(delta);
+            if(floatingScore.isFinished())
+            {
+                floatingScorePool.free(floatingScore);
+                floatingScore.removeIndex(i);
+            }
+        }
         spawnObstacles(delta);
         spawnCoins(delta);
         checkCollision();
@@ -136,6 +150,10 @@ public class GameController {
 
     public Array<Obstacle> getObstacles() {
         return obstacles;
+    }
+
+    public Array<FloatingScore> getFloatingScore() {
+        return floatingScore;
     }
 
     public float getStartWaitTimer() {
@@ -159,6 +177,8 @@ public class GameController {
         coins.clear();
         obstaclePool.freeAll(obstacles);
         obstacles.clear();
+        floatingScorePool.freeAll(floatingScore);
+        floatingScore.clear();
 
         monster.reset();
         monster.setPosition(monsterStartX, monsterStartY);
@@ -297,6 +317,7 @@ public class GameController {
 
             if (Intersector.overlaps(monster.getBounds(), coin.getBounds())) {
                 GameManager.INSTANCE.addScore(GameConfig.COIN_SCORE);
+                addFloatingScore(GameConfig.COIN_SCORE);
                 coinPool.free(coin);
                 coins.removeIndex(i);
                 listener.hitCoin();
@@ -308,6 +329,7 @@ public class GameController {
             Obstacle obstacle = obstacles.get(i);
             if (Intersector.overlaps(monster.getBounds(), obstacle.getSensor())) {
                 GameManager.INSTANCE.addScore(GameConfig.OBSTACLE_SCORE);
+                addFloatingScore(GameConfig.OBSTACLE_SCORE);
                 obstaclePool.free(obstacle);
                 obstacles.removeIndex(i);
 
@@ -318,6 +340,11 @@ public class GameController {
         }
 
     }
-
+    public void addFloatingScore(int score){
+        FloatingScore  floatingScore =new floatingScorePool.obtain();
+        floatingScore.setStartPosition(GameConfig.HUD_WIDTH/2f,GameConfig.HUD_HIGHT/2f);
+       floatingScore.setScore(score);
+       floatingScore.add(floatingScore);
+    }
 
 }

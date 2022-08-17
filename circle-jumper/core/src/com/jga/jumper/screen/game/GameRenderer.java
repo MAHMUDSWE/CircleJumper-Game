@@ -334,5 +334,14 @@ public class GameRenderer implements Disposable {
                     (GameConfig.HUD_HEIGHT + layout.height) / 2f
             );
         }
+        Color oldFontColor = new Color(font.getColor());
+
+        for(FloatingScore floatingScore : controller.getFloatingScore()){
+            layout.setText(font floatingScore.getScoreString());
+            font.draw(batch,layout,
+               floatingScore.getX() = layout.width/2f;
+                floatingScore.getY() = layout.height/2f);
+        }
+        font.setColor(oldFontColor);
     }
 }
