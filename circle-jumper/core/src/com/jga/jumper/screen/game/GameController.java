@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.jga.jumper.common.FloatingScore;
 import com.jga.jumper.common.GameManager;
 import com.jga.jumper.common.GameState;
 import com.jga.jumper.common.SoundListener;
@@ -48,9 +49,8 @@ public class GameController {
 
     private OverlayCallback callback;
 
-    private  final Array<FloatingScore> floatingScore = new Array<FloatingScore>();
-    private Pool<FloatingScore>floatingScorePool= Pools.get(FloatingScore.class);
-
+    private final Array<FloatingScore> floatingScores = new Array<FloatingScore>();
+    private Pool<FloatingScore> floatingScorePool = Pools.get(FloatingScore.class);
 
 
     //==constructors==
@@ -109,7 +109,7 @@ public class GameController {
         GameManager.INSTANCE.updateDisplayScore(delta);
 
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && monster.isWalking()) {
-           listener.jump();
+            listener.jump();
             monster.jump();
         }
 
@@ -121,13 +121,12 @@ public class GameController {
             coin.update(delta);
         }
 
-        for(int i=0;i<floatingScore.size;i++){
-            FloatingScore floatingScore = floatingScore.get(i);
+        for (int i = 0; i < floatingScores.size; i++) {
+            FloatingScore floatingScore = floatingScores.get(i);
             floatingScore.update(delta);
-            if(floatingScore.isFinished())
-            {
+            if (floatingScore.isFinished()) {
                 floatingScorePool.free(floatingScore);
-                floatingScore.removeIndex(i);
+                floatingScores.removeIndex(i);
             }
         }
         spawnObstacles(delta);
@@ -153,7 +152,7 @@ public class GameController {
     }
 
     public Array<FloatingScore> getFloatingScore() {
-        return floatingScore;
+        return floatingScores;
     }
 
     public float getStartWaitTimer() {
@@ -175,10 +174,12 @@ public class GameController {
     public void restart() {
         coinPool.freeAll(coins);
         coins.clear();
+
         obstaclePool.freeAll(obstacles);
         obstacles.clear();
-        floatingScorePool.freeAll(floatingScore);
-        floatingScore.clear();
+
+        floatingScorePool.freeAll(floatingScores);
+        floatingScores.clear();
 
         monster.reset();
         monster.setPosition(monsterStartX, monsterStartY);
@@ -334,17 +335,18 @@ public class GameController {
                 obstacles.removeIndex(i);
 
             } else if (Intersector.overlaps(monster.getBounds(), obstacle.getBounds())) {
-               listener.lose();
+                listener.lose();
                 gameState = GameState.GAME_OVER;
             }
         }
 
     }
-    public void addFloatingScore(int score){
-        FloatingScore  floatingScore =new floatingScorePool.obtain();
-        floatingScore.setStartPosition(GameConfig.HUD_WIDTH/2f,GameConfig.HUD_HIGHT/2f);
-       floatingScore.setScore(score);
-       floatingScore.add(floatingScore);
+
+    public void addFloatingScore(int score) {
+        FloatingScore floatingScore = floatingScorePool.obtain();
+        floatingScore.setStartPosition(GameConfig.HUD_WIDTH / 2f, GameConfig.HUD_HEIGHT / 2f);
+        floatingScore.setScore(score);
+        floatingScores.add(floatingScore);
     }
 
 }

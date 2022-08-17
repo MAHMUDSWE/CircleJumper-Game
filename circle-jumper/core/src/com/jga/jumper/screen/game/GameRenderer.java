@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.jga.jumper.assets.AssetDescriptors;
 import com.jga.jumper.assets.RegionNames;
+import com.jga.jumper.common.FloatingScore;
 import com.jga.jumper.common.GameManager;
 import com.jga.jumper.common.GameState;
 import com.jga.jumper.config.GameConfig;
@@ -122,7 +123,7 @@ public class GameRenderer implements Disposable {
         debugCameraController.applyTo(camera);
 
         renderGameplay(delta);
-        renderDebug();
+       // renderDebug();
 
         renderHud();
 
@@ -336,11 +337,11 @@ public class GameRenderer implements Disposable {
         }
         Color oldFontColor = new Color(font.getColor());
 
-        for(FloatingScore floatingScore : controller.getFloatingScore()){
-            layout.setText(font floatingScore.getScoreString());
-            font.draw(batch,layout,
-               floatingScore.getX() = layout.width/2f;
-                floatingScore.getY() = layout.height/2f);
+        for (FloatingScore floatingScore : controller.getFloatingScore()) {
+            layout.setText(font, floatingScore.getScoreString());
+            font.draw(batch, layout,
+                    floatingScore.getX() - layout.width / 2f,
+                    floatingScore.getY() - layout.height / 2f);
         }
         font.setColor(oldFontColor);
     }
